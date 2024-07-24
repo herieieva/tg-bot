@@ -16,10 +16,10 @@ int main()
       "start", [&ToDoBot](const TgBot::Message::Ptr &message)
         {
         ToDoBot.getApi().sendMessage(
-            message->chat->id, "Hi! Use me as your personal task manager.\n"
-                               "Let’s start with your current To Do list.\n"
-                               "Select the add_task command from the menu "
-                               "below and give me your tasks one by one: ");
+            message->chat->id,
+            "Hi! Use me as your personal task manager :) \n"
+            "Let’s start with your current To-Do list!\n\n"
+            "To write 1 task to the list, select add_task command below");
         });
 
   // Function to prompt the user to add a task
@@ -91,6 +91,31 @@ int main()
                              });
 
   my_deadlines.detach();
+
+  //help command - simple text
+  ToDoBot.getEvents().onCommand("help", [&ToDoBot](const TgBot::Message::Ptr
+                                                   &message)
+    {
+    ToDoBot.getApi().sendMessage(
+        message->chat->id,
+        "To-do bot provides a list of available commands. You can access "
+        "this list by typing / in the chat or pressing the '/' or 'menu' "
+        "button\n"
+        "/start command wakes up the bot and sends welcome message :)\n"
+        "/add_task command is our favourite - it receives your input "
+        "(please follow the example strictly) and will carefully numerate it, "
+        "give a cute emoji status and store it. But it`s not all! It will also "
+        "remind you about the task 10 minutes before the deadline.\n");
+    });
+
+//about command - simple text
+  ToDoBot.getEvents().onCommand("about", [&ToDoBot](const TgBot::Message::Ptr
+                                                   &message)
+    {
+    ToDoBot.getApi().sendMessage(
+        message->chat->id,
+        "This is a pet project bot that is useful for time and task management. Created in 2024 by @Hereieiva.");
+    });
 
   try
     {
