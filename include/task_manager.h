@@ -36,6 +36,7 @@ namespace to_do_bot
     int get_task_counter();
 
     std::map<int, Task> tasks_; // to store to-do list
+    //std::map<std::string, > tasks_; // to store daily reminders
 
     bool expecting_task_;
 

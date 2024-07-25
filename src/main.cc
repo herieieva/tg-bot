@@ -34,39 +34,39 @@ int main()
 
     // Capture any message and parse it as a task if the bot is waiting for a
     // task
-    ToDoBot.getEvents().onAnyMessage([&ToDoBot, &task_manager](
+    ToDoBot.getEvents().onNonCommandMessage([&ToDoBot, &task_manager](
         const TgBot::Message::Ptr &message)
-                                       {
-                                       if (task_manager.expecting_task_)
-                                         {
-                                         if (task_manager.AddTask(message->text, message->chat->id))
-                                           {
-                                           ToDoBot.getApi().sendMessage(message->chat->id,
-                                                                        "Success! Here is your to-do list: \n");
-                                           for (const auto &task : task_manager.tasks_)
-                                             {
-                                             ToDoBot.getApi().sendMessage(message->chat->id,
-                                                                          std::to_string(task.first) + ". " +
-                                                                              task.second.description + " - " +
-                                                                              task.second.deadline_text + " " +
-                                                                              task.second.GetStatus());
-                                             }
-                                           } else
-                                           {
-                                           ToDoBot.getApi().sendMessage(
-                                               message->chat->id,
-                                               "Invalid task format. Please use 'description - deadline' \n "
-                                               "Example: \n "
-                                               "To send the email - 20.07.24 15:00");
-                                           }
+                                              {
+                                              if (task_manager.expecting_task_)
+                                                {
+                                                if (task_manager.AddTask(message->text, message->chat->id))
+                                                  {
+                                                  ToDoBot.getApi().sendMessage(message->chat->id,
+                                                                               "Success! Here is your to-do list: \n");
+                                                  for (const auto &task : task_manager.tasks_)
+                                                    {
+                                                    ToDoBot.getApi().sendMessage(message->chat->id,
+                                                                                 std::to_string(task.first) + ". " +
+                                                                                     task.second.description + " - " +
+                                                                                     task.second.deadline_text + " " +
+                                                                                     task.second.GetStatus());
+                                                    }
+                                                  } else
+                                                  {
+                                                  ToDoBot.getApi().sendMessage(
+                                                      message->chat->id,
+                                                      "Invalid task format. Please use 'description - deadline' \n "
+                                                      "Example: \n "
+                                                      "To send the email - 20.07.24 15:00");
+                                                  }
 
-                                         task_manager.expecting_task_ =
-                                             false; // Reset the flag after receiving the task
-                                         }
-                                       });
+                                                task_manager.expecting_task_ =
+                                                    false; // Reset the flag after receiving the task
+                                                }
+                                              });
     });
 
-  std::thread my_deadlines([&ToDoBot, &task_manager]()
+  std::thread my_reminders([&ToDoBot, &task_manager]()
                              {
                              while (true)
                                {
@@ -83,6 +83,8 @@ int main()
                                              current_task.second.description + " - " +
                                              current_task.second.deadline_text + " " +
                                              current_task.second.GetStatus());
+                                     
+                                     std::this_thread::sleep_for(std::chrono::minutes(9));
                                      }
                                    }
                                  }
@@ -90,7 +92,21 @@ int main()
                                }
                              });
 
-  my_deadlines.detach();
+  my_reminders.detach();
+
+  /*ToDoBot.getEvents().onCommand("add_reminder", [&ToDoBot](const TgBot::Message::Ptr
+                                                           &message)
+    {
+    ToDoBot.getApi().sendMessage(
+        message->chat->id,
+        "Please provide a short text for reminder\n");
+
+    ToDoBot.getEvents().onNonCommandMessage([&ToDoBot](
+        const TgBot::Message::Ptr &message)
+        {
+
+        });
+    });*/
 
   //help command - simple text
   ToDoBot.getEvents().onCommand("help", [&ToDoBot](const TgBot::Message::Ptr
@@ -110,7 +126,7 @@ int main()
 
 //about command - simple text
   ToDoBot.getEvents().onCommand("about", [&ToDoBot](const TgBot::Message::Ptr
-                                                   &message)
+                                                    &message)
     {
     ToDoBot.getApi().sendMessage(
         message->chat->id,
