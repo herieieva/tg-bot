@@ -52,8 +52,63 @@ bool to_do_bot::TaskManager::IsDeadlineSoon(const Task &task)
   return !task.isDone && deadline <= now + std::chrono::minutes(10);
   }
 
+bool to_do_bot::TaskManager::SetReminderText(const std::string &input)
+  {
+  Reminder new_reminder
+      {
+          input
+      };
+
+  reminders_[++reminder_counter_] = new_reminder;
+
+  return !reminders_.empty(); //report if creating new reminder was successful
+  }
+bool to_do_bot::TaskManager::SetReminderTime(const std::string &input)
+  {
+  std::istringstream input_stream(input);
+  std::tm tm_storage{};
+
+  input_stream >> std::get_time(&tm_storage, "%H:%M:%S");
+
+  tm_storage.tm_sec = 0;
+
+  if (input_stream.fail())
+    {
+    throw std::runtime_error("Failed to parse time string");
+    }
+
+  reminders_[reminder_counter_].hours = tm_storage.tm_hour;
+  reminders_[reminder_counter_].mins = tm_storage.tm_min;
+  reminders_[reminder_counter_].sec = tm_storage.tm_sec;
+  }
+
+bool to_do_bot::TaskManager::TimeToRemind(const Reminder &reminder)
+  {
+  auto now{std::chrono::system_clock::now()};
+
+  const auto &now_time_t{std::chrono::system_clock::to_time_t(now)};
+
+  std::tm now_tm{*std::localtime(&now_time_t)};
+
+  const auto &hours_now{now_tm.tm_hour};
+  const auto &mins_now{now_tm.tm_min};
+  const auto &sec_now{now_tm.tm_sec};
+
+  return hours_now == reminder.hours && mins_now == reminder.mins && sec_now == reminder.sec;
+  }
+
 int to_do_bot::TaskManager::get_task_counter()
   { return task_counter_; }
+
+void to_do_bot::TaskManager::save_chat_id(int64_t id)
+  {
+  chat_id = id;
+  }
+int64_t to_do_bot::TaskManager::get_chat_id()
+  {
+  return chat_id;
+  };
+
 
 /*void TaskManager::MarkTaskAsDone(int taskNumber) {
     if (taskMap.find(taskNumber) != taskMap.end()) {
