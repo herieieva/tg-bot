@@ -109,9 +109,25 @@ int64_t to_do_bot::TaskManager::get_chat_id()
   return chat_id;
   };
 
-
-/*void TaskManager::MarkTaskAsDone(int taskNumber) {
-    if (taskMap.find(taskNumber) != taskMap.end()) {
-        taskMap[taskNumber].isDone = true;
+void to_do_bot::TaskManager::MarkTaskAsDone(std::string number)
+  {
+  int task_number{std::stoi(number)};
+  if (tasks_.find(task_number) != tasks_.end())
+    {
+    tasks_[task_number].isDone = true;
     }
-}*/
+  }
+
+std::string to_do_bot::TaskManager::ShowToDoList()
+  {
+  std::string output;
+  for (const auto &current_task : this->tasks_)
+    {
+    output +=
+        std::to_string(current_task.first) + ". " +
+            current_task.second.description + " - " +
+            current_task.second.deadline_text + " " +
+            current_task.second.GetStatus() + '\n';
+    }
+  return output;
+  }

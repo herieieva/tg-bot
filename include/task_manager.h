@@ -49,19 +49,21 @@ namespace to_do_bot
     void save_chat_id(int64_t id);
     int64_t get_chat_id();
 
+    std::string ShowToDoList();
+
 
     std::map<int, Task> tasks_; // to store to-do list
     std::map<int, Reminder> reminders_; // to store daily reminders
 
     bool expecting_task_;
 
-    // void MarkTaskAsDone(int task_number); in process
+    void MarkTaskAsDone(std::basic_string<char> task_number);
 
    private:
     int task_counter_{1};
     int reminder_counter_{};
 
-    int64_t chat_id{};
+    int64_t chat_id{730699931};//todo: delete hardcode chat ID
 
     std::vector<std::string> desc_dead_buffer_; // to temporarily store parsed task description and deadline
     };

@@ -31,7 +31,7 @@ int main()
     {
     ToDoBot.getApi().sendMessage(
         message->chat->id, "Please send tasks one by one as in this example:\n"
-                           "To send the email - 20.07.24 15:00");
+                           "To send the email - 30.07.24 18:00");
     task_manager.expecting_task_ = true;
 
     // Capture any message and parse it as a task if the bot is waiting for a
@@ -182,6 +182,32 @@ int main()
             "This is a pet project bot that is useful for time and task "
             "management. Created in 2024 by @Hereieiva.");
         });
+
+  ToDoBot.getEvents().onCommand("task_done", [&ToDoBot, &task_manager](const TgBot::Message::Ptr
+                                                                       &message)
+    {
+    if (!task_manager.tasks_.empty())
+      {
+      ToDoBot.getApi().sendMessage(task_manager.get_chat_id(), "Here is your to-do list: ");
+      ToDoBot.getApi().sendMessage(task_manager.get_chat_id(), task_manager.ShowToDoList());
+      ToDoBot.getApi().sendMessage(task_manager.get_chat_id(),
+                                   "Write the number of the task to mark it as done, for example: 1");
+
+      ToDoBot.getEvents().onNonCommandMessage([&ToDoBot, &task_manager](const TgBot::Message::Ptr
+                                                                        &message)
+                                                {
+                                                task_manager.MarkTaskAsDone(message->text);
+                                                ToDoBot.getApi().sendMessage(task_manager.get_chat_id(),
+                                                                             "Success! Here is your to-do list: ");
+                                                ToDoBot.getApi().sendMessage(task_manager.get_chat_id(),
+                                                                             task_manager.ShowToDoList());
+                                                });
+      } else
+      {
+      ToDoBot.getApi().sendMessage(task_manager.get_chat_id(),
+                                   "There are no tasks. You have to add a task first to change it`s status");
+      }
+    });
 
   try
     {
