@@ -1,5 +1,5 @@
-#ifndef TO_DO_BOT_INCLUDE_TASK_MANAGER_H
-#define TO_DO_BOT_INCLUDE_TASK_MANAGER_H
+#ifndef TG_BOT_INCLUDE_TASK_MANAGER_H
+#define TG_BOT_INCLUDE_TASK_MANAGER_H
 
 #include <chrono>
 #include <map>
@@ -17,8 +17,6 @@ namespace to_do_bot
     std::string deadline_text;
 
     std::chrono::system_clock::time_point deadline_chrono;
-
-    int64_t chat_id;
 
     bool isDone;
     };
@@ -69,4 +67,4 @@ namespace to_do_bot
     };
   } // namespace to_do_bot
 
-#endif // TO_DO_BOT_INCLUDE_TASK_MANAGER_H
+#endif // TG_BOT_INCLUDE_TASK_MANAGER_H

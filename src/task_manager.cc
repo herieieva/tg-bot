@@ -2,7 +2,7 @@
 #include <sstream>
 #include <tgbot/tools/StringTools.h>
 
-#include "../include/task_manager.h"
+#include "task_manager.h"
 
 bool to_do_bot::TaskManager::AddTask(const std::string &input,
                                      const int64_t &chat_id)
@@ -35,7 +35,7 @@ bool to_do_bot::TaskManager::AddTask(const std::string &input,
         {
             TaskManager::desc_dead_buffer_[expected_buffer_size - 2],
             TaskManager::desc_dead_buffer_[expected_buffer_size - 1],
-            parsed_deadline, chat_id, false
+            parsed_deadline, false
         };
     tasks_[task_counter_++] = newTask;
     return true;

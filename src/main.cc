@@ -79,7 +79,7 @@ int main()
                                    if (task_manager.IsDeadlineSoon(current_task.second))
                                      {
                                      ToDoBot.getApi().sendMessage(
-                                         current_task.second.chat_id,
+                                         task_manager.get_chat_id(),
                                          "Hey, buddy! The deadline for this task is soon: \n" +
                                              std::to_string(current_task.first) + ". " +
                                              current_task.second.description + " - " +
@@ -104,7 +104,7 @@ int main()
                                        ToDoBot.getApi().sendMessage(task_manager.get_chat_id(),
                                                                     "Notification! "
                                                                         + curr_reminder.second.description);
-                                       std::this_thread::sleep_for(std::chrono::seconds(10));
+                                       std::this_thread::sleep_for(std::chrono::seconds(30));
                                        }
                                      }
                                    }
