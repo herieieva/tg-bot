@@ -39,32 +39,29 @@ int main()
     ToDoBot.getEvents().onNonCommandMessage(
         [&ToDoBot, &task_manager](const TgBot::Message::Ptr &message)
           {
-          if (task_manager.expecting_task_)
+          if (task_manager.AddTask(message->text, message->chat->id))
             {
-            if (task_manager.AddTask(message->text, message->chat->id))
+            ToDoBot.getApi().sendMessage(
+                message->chat->id, "Success! Here is your to-do list: \n");
+            for (const auto &task : task_manager.tasks_)
               {
               ToDoBot.getApi().sendMessage(
-                  message->chat->id, "Success! Here is your to-do list: \n");
-              for (const auto &task : task_manager.tasks_)
-                {
-                ToDoBot.getApi().sendMessage(
-                    message->chat->id, std::to_string(task.first) + ". " +
-                        task.second.description + " - " +
-                        task.second.deadline_text + " " +
-                        task.second.GetStatus());
-                }
-              } else
-              {
-              ToDoBot.getApi().sendMessage(
-                  message->chat->id,
-                  "Invalid task format. Please use 'description - deadline' \n "
-                  "Example: \n "
-                  "To send the email - 20.07.24 15:00");
+                  message->chat->id, std::to_string(task.first) + ". " +
+                      task.second.description + " - " +
+                      task.second.deadline_text + " " +
+                      task.second.GetStatus());
               }
-
-            task_manager.expecting_task_ =
-                false; // Reset the flag after receiving the task
+            } else
+            {
+            ToDoBot.getApi().sendMessage(
+                message->chat->id,
+                "Invalid task format. Please use 'description - deadline' \n "
+                "Example: \n "
+                "To send the email - 20.07.24 15:00");
             }
+
+          task_manager.expecting_task_ =
+              false; // Reset the flag after receiving the task
           });
     });
 

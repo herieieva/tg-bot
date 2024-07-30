@@ -8,38 +8,41 @@
 bool to_do_bot::TaskManager::AddTask(const std::string &input,
                                      const int64_t &chat_id)
   {
-  StringTools::split(input, '-', desc_dead_buffer_);
-
-  auto expected_buffer_size{TaskManager::get_task_counter() * 2};
-
-  if (TaskManager::desc_dead_buffer_.size() == expected_buffer_size)
+  if (this->expecting_task_)
     {
-    std::tm time_components{};
+    StringTools::split(input, '-', desc_dead_buffer_);
 
-    std::istringstream ss(
-        TaskManager::desc_dead_buffer_[expected_buffer_size -
-            1]); // extract the last deadline
-    ss >> std::get_time(&time_components, "%d.%m.%y %H:%M:%S");
+    auto expected_buffer_size{TaskManager::get_task_counter() * 2};
 
-    time_components.tm_year = 2024 - 1900; // default 2024 year
-    time_components.tm_hour += 3;          // GMT +3
-    time_components.tm_isdst = -1;         // whether DST is in effect
-
-    auto time_storage{std::mktime(&time_components)};
-    if (time_storage == -1)
+    if (TaskManager::desc_dead_buffer_.size() == expected_buffer_size)
       {
-      throw std::runtime_error("Failed to convert tm to time_t");
-      }
-    auto parsed_deadline{std::chrono::system_clock::from_time_t(time_storage)};
+      std::tm time_components{};
 
-    Task newTask
+      std::istringstream ss(
+          TaskManager::desc_dead_buffer_[expected_buffer_size -
+              1]); // extract the last deadline
+      ss >> std::get_time(&time_components, "%d.%m.%y %H:%M:%S");
+
+      time_components.tm_year = 2024 - 1900; // default 2024 year
+      time_components.tm_hour += 3;          // GMT +3
+      time_components.tm_isdst = -1;         // whether DST is in effect
+
+      auto time_storage{std::mktime(&time_components)};
+      if (time_storage == -1)
         {
-            TaskManager::desc_dead_buffer_[expected_buffer_size - 2],
-            TaskManager::desc_dead_buffer_[expected_buffer_size - 1],
-            parsed_deadline, false
-        };
-    tasks_[task_counter_++] = newTask;
-    return true;
+        throw std::runtime_error("Failed to convert tm to time_t");
+        }
+      auto parsed_deadline{std::chrono::system_clock::from_time_t(time_storage)};
+
+      Task newTask
+          {
+              TaskManager::desc_dead_buffer_[expected_buffer_size - 2],
+              TaskManager::desc_dead_buffer_[expected_buffer_size - 1],
+              parsed_deadline, false
+          };
+      tasks_[task_counter_++] = newTask;
+      return true;
+      }
     }
 
   return false;
@@ -55,10 +58,7 @@ bool to_do_bot::TaskManager::IsDeadlineSoon(const Task &task)
 
 bool to_do_bot::TaskManager::SetReminderText(const std::string &input)
   {
-  Reminder new_reminder
-      {
-          input
-      };
+  Reminder new_reminder{input};
 
   reminders_[++reminder_counter_] = new_reminder;
 
@@ -103,13 +103,9 @@ int to_do_bot::TaskManager::get_task_counter()
   { return task_counter_; }
 
 void to_do_bot::TaskManager::save_chat_id(int64_t id)
-  {
-  chat_id_ = id;
-  }
+  { chat_id_ = id; }
 int64_t to_do_bot::TaskManager::get_chat_id()
-  {
-  return chat_id_;
-  };
+  { return chat_id_; };
 
 void to_do_bot::TaskManager::MarkTaskAsDone(std::string number)
   {
