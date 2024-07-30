@@ -1,9 +1,9 @@
+#include "task_manager.h"
+
 #include <cstdio>
 #include <thread>
 
 #include <tgbot/tgbot.h>
-
-#include "task_manager.h"
 
 int main()
   {
@@ -188,9 +188,10 @@ int main()
     {
     if (!task_manager.tasks_.empty())
       {
-      ToDoBot.getApi().sendMessage(task_manager.get_chat_id(), "Here is your to-do list: ");
-      ToDoBot.getApi().sendMessage(task_manager.get_chat_id(), task_manager.ShowToDoList());
-      ToDoBot.getApi().sendMessage(task_manager.get_chat_id(),
+      const auto &chat_id{task_manager.get_chat_id()};
+      ToDoBot.getApi().sendMessage(chat_id, "Here is your to-do list: ");
+      ToDoBot.getApi().sendMessage(chat_id, task_manager.ShowToDoList());
+      ToDoBot.getApi().sendMessage(chat_id,
                                    "Write the number of the task to mark it as done, for example: 1");
 
       ToDoBot.getEvents().onNonCommandMessage([&ToDoBot, &task_manager](const TgBot::Message::Ptr

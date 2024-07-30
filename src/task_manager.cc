@@ -1,8 +1,9 @@
+#include "task_manager.h"
+
 #include <iomanip>
 #include <sstream>
-#include <tgbot/tools/StringTools.h>
 
-#include "task_manager.h"
+#include <tgbot/tools/StringTools.h>
 
 bool to_do_bot::TaskManager::AddTask(const std::string &input,
                                      const int64_t &chat_id)
@@ -49,7 +50,7 @@ bool to_do_bot::TaskManager::IsDeadlineSoon(const Task &task)
   auto now{std::chrono::system_clock::now() + std::chrono::hours(3)};
   auto deadline{task.deadline_chrono};
 
-  return !task.isDone && deadline <= now + std::chrono::minutes(10);
+  return !task.is_done && deadline <= now + std::chrono::minutes(10);
   }
 
 bool to_do_bot::TaskManager::SetReminderText(const std::string &input)
@@ -63,6 +64,7 @@ bool to_do_bot::TaskManager::SetReminderText(const std::string &input)
 
   return !reminders_.empty(); //report if creating new reminder was successful
   }
+
 bool to_do_bot::TaskManager::SetReminderTime(const std::string &input)
   {
   std::istringstream input_stream(input);
@@ -102,11 +104,11 @@ int to_do_bot::TaskManager::get_task_counter()
 
 void to_do_bot::TaskManager::save_chat_id(int64_t id)
   {
-  chat_id = id;
+  chat_id_ = id;
   }
 int64_t to_do_bot::TaskManager::get_chat_id()
   {
-  return chat_id;
+  return chat_id_;
   };
 
 void to_do_bot::TaskManager::MarkTaskAsDone(std::string number)
@@ -114,7 +116,7 @@ void to_do_bot::TaskManager::MarkTaskAsDone(std::string number)
   int task_number{std::stoi(number)};
   if (tasks_.find(task_number) != tasks_.end())
     {
-    tasks_[task_number].isDone = true;
+    tasks_[task_number].is_done = true;
     }
   }
 
