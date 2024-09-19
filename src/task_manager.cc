@@ -1,4 +1,4 @@
-#include "task_manager.h"
+#include "../include/task_manager.h"
 
 #include <iomanip>
 #include <sstream>
@@ -82,6 +82,7 @@ bool to_do_bot::TaskManager::SetReminderTime(const std::string &input)
   reminders_[reminder_counter_].hours = tm_storage.tm_hour;
   reminders_[reminder_counter_].mins = tm_storage.tm_min;
   reminders_[reminder_counter_].sec = tm_storage.tm_sec;
+  return true;
   }
 
 bool to_do_bot::TaskManager::TimeToRemind(const Reminder &reminder)

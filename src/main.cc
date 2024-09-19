@@ -25,7 +25,7 @@ int main()
         });
 
   // Function to prompt the user to add a task
-  ToDoBot.getEvents().onCommand("add_task", [&ToDoBot, &task_manager](
+ ToDoBot.getEvents().onCommand("add_task", [&ToDoBot, &task_manager](
       const TgBot::Message::Ptr
       &message)
     {

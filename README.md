@@ -4,7 +4,7 @@
 If you're building locally, make sure all necessary tools are installed. To do this, run the script:
 
 ```bash
-./ubuntu_env.sh
+sudo ./ubuntu_env.sh
 ```
 
 ## Setting up
